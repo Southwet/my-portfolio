@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人主页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.75;
+            color: #333;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 滚动淡入动画 */
+        .stagger {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .stagger.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 头部区域 */
+        .header {
+            position: relative;
+            text-align: center;
+            background: linear-gradient(180deg, #4c3a9a 0%, #764ba2 60%, #8e6bc0 100%);
+            color: white;
+            padding: 60px 20px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        /* 左上角装饰 logo */
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 18px;
+            width: 110px;
+            height: 26px;
+            background: url('abeam-logo.png') no-repeat left top / contain;
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 16px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18),
+                        0 0 0 0 rgba(255, 255, 255, 0.5);
+            animation: breathe 5s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18),
+                            0 0 0 0 rgba(255, 255, 255, 0.0);
+            }
+            50% {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18),
+                            0 0 12px 3px rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 28%;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .header .en-name {
+            font-weight: 300;
+            letter-spacing: 0.8px;
+            opacity: 0.9;
+        }
+
+        .header .subtitle {
+            font-size: 17px;
+            opacity: 0.92;
+            font-weight: 400;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 12px 24px rgba(0,0,0,0.08);
+        }
+
+        .about-card {
+            border-left: 3px solid #667eea;
+            padding-left: 25px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            line-height: 1;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #667eea;
+            display: inline-block;
+        }
+
+        .title-icon {
+            font-size: 24px;
+            margin-left: 4px;
+            display: inline-block;
+            transform: translateY(-1px);
+        }
+
+        /* 技能标签 */
+        .skill-group {
+            margin-bottom: 14px;
+        }
+
+        .skill-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .skill-label {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+        }
+
+        /* 经历列表 */
+        .experience-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .experience-item:last-child {
+            border-bottom: none;
+        }
+
+        /* 折叠基础样式 */
+        .exp-group,
+        .exp-project {
+            cursor: pointer;
+        }
+
+        .exp-group > summary,
+        .exp-project > summary {
+            list-style: none;
+            cursor: pointer;
+            position: relative;
+            padding-left: 18px;
+        }
+
+        .exp-group > summary::-webkit-details-marker,
+        .exp-project > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* 职位级 summary 左缩进给 chevron 让位 */
+        .exp-group > summary {
+            position: relative;
+            padding-left: 22px;
+            list-style: none;
+            cursor: pointer;
+        }
+
+        /* 职位级 chevron — 与 h3 行中线对齐 */
+        .exp-group > summary::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid #667eea;
+            border-right: 2px solid #667eea;
+            transition: transform 0.2s ease;
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .exp-group[open] > summary::before {
+            transform: translateY(8px) rotate(135deg);
+        }
+
+        /* 项目级 chevron */
+        .exp-project > summary::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            margin-top: -3px;
+            border-top: 1.5px solid #a5b4fc;
+            border-right: 1.5px solid #a5b4fc;
+            transition: transform 0.2s ease;
+            transform: rotate(45deg);
+        }
+
+        .exp-project[open] > summary::before {
+            transform: rotate(135deg);
+        }
+
+        /* 职位级 */
+        .exp-head h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .exp-head .time {
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* 项目级 */
+        .exp-project > summary {
+            font-size: 14px;
+            color: #4338ca;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .exp-body {
+            cursor: default;
+        }
+
+        .exp-time {
+            font-size: 13px;
+            color: #999;
+            margin-top: 4px;
+            padding-left: 18px;
+        }
+
+        .exp-bg {
+            font-size: 13px;
+            color: #777;
+            margin-top: 6px;
+            line-height: 1.7;
+            padding-left: 18px;
+        }
+
+        .exp-bg strong,
+        .exp-resp-label {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .exp-resp-label {
+            display: block;
+            font-size: 14px;
+            margin-top: 12px;
+            padding-left: 18px;
+        }
+
+        .exp-resp-list {
+            margin-top: 6px;
+            padding-left: 36px;
+        }
+
+        .exp-resp-list li {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 4px;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header stagger">
+            <div class="avatar">
+                <img src="avatar.png" alt="兰天浩 / Laurent">
+            </div>
+            <h1>兰天浩 <span class="en-name">（Laurent LAN）</span></h1>
+            <p class="subtitle">初级业务顾问 / Analyst</p>
+        </div>
+
+        <!-- 关于我 -->
+        <div class="card stagger about-card">
+            <h2>关于我 <span class="title-icon">🚀</span></h2>
+            <p>初级业务顾问，现就职于德硕管理咨询（ABeam Consulting China），在初次参加的 SAP 集成财务申报与经营管理系统开发项目中承担测试支持、用户沟通、材料整理和简单 SQL 开发，正通过 SQL/Python 向 FDE 迈进。</p>
+        </div>
+
+        <!-- 技能 -->
+        <div class="card stagger">
+            <h2>技能 <span class="title-icon">🛠️</span></h2>
+            <div class="skill-group">
+                <span class="skill-label">业务能力</span>
+                <div class="skills">
+                    <span class="skill-tag">业务分析</span>
+                    <span class="skill-tag">项目管理</span>
+                    <span class="skill-tag">咨询方法论</span>
+                    <span class="skill-tag">跨国团队沟通</span>
+                </div>
+            </div>
+            <div class="skill-group">
+                <span class="skill-label">技术能力</span>
+                <div class="skills">
+                    <span class="skill-tag">SQL (SSMS)</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">SAP FI/SD</span>
+                    <span class="skill-tag">AI 工具应用</span>
+                    <span class="skill-tag">Vibe Coding（学习中）</span>
+                </div>
+            </div>
+            <div class="skill-group">
+                <span class="skill-label">语言能力</span>
+                <div class="skills">
+                    <span class="skill-tag">日语</span>
+                    <span class="skill-tag">英语</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 工作经历 -->
+        <div class="card stagger">
+            <h2>工作经历 <span class="title-icon">💼</span></h2>
+            <div class="experience-item">
+                <details class="exp-group" open>
+                    <summary>
+                        <div class="exp-head">
+                            <h3>初级业务顾问 · ABeam Consulting（德硕管理咨询）</h3>
+                            <div class="time">2026.07 - 至今</div>
+                        </div>
+                    </summary>
+                    <details class="exp-project">
+                        <summary>新经营基盘系统（New NASA）— 业务顾问 / 测试与交付支持</summary>
+                        <div class="exp-body">
+                            <div class="exp-time">2026.10 - 至今</div>
+                            <p class="exp-bg">
+                                <strong>项目背景：</strong>日方总部委托的跨国内部财务与申报系统，覆盖 10+ 国家，集成 SAP 财务与 SuccessFactors。
+                            </p>
+                            <span class="exp-resp-label">核心职责与产出：</span>
+                            <ul class="exp-resp-list">
+                                <li><strong>跨国业务转译：</strong>作为中日英三语沟通桥梁，协助开发团队准确理解日方业务需求，参与请求管理（请款、审批流、报销金、税务调整等多个功能）。</li>
+                                <li><strong>测试交付与质量把控：</strong>负责开发中后期的并行测试，独立编写并交付 25+ 份测试式样书；参与敏捷迭代中的 Change Request 跟进与闭环。</li>
+                                <li><strong>项目进度协同：</strong>负责 WorkItem 状态追踪与过期提醒管理，推动测试与修改阶段的进度透明化，保障多系统（SAP）集成联调顺利推进。</li>
+                                <li><strong>技术拓展应用：</strong>参与底层数据库（SSMS）的简单 SQL 语句编写与维护，探索 Vibe Coding 实践，利用技术手段提升业务交付效率。</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <!-- 将来新项目加在这里 -->
+                </details>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>© 2026 Laurent LAN的个人主页 · Via Vibe Coding by TRAE</p>
+        </div>
+    </div>
+    <script>
+        const staggerEls = document.querySelectorAll('.stagger');
+        // 给每个元素分配固定延迟（基于它们在页面中的顺序）
+        staggerEls.forEach((el, i) => {
+            el.style.transitionDelay = (i * 100) + 'ms';
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                } else if (entry.intersectionRatio === 0) {
+                    // 完全滚出视口才撤销，避免边缘阈值抖动
+                    entry.target.classList.remove('fade-in');
+                }
+            });
+        }, { threshold: [0.15, 0] });
+
+        staggerEls.forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
