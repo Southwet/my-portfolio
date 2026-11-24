@@ -318,6 +318,53 @@
             margin-bottom: 4px;
         }
 
+        /* 项目作品 */
+        .project-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .project-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .project-card h4 {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .project-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .project-tag {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
         /* 页脚 */
         .footer {
             text-align: center;
@@ -404,6 +451,31 @@
                     </details>
                     <!-- 将来新项目加在这里 -->
                 </details>
+            </div>
+        </div>
+
+        <!-- 项目作品 -->
+        <div class="card stagger">
+            <h2>项目作品 <span class="title-icon">🏆</span></h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h4>New NASA 新经营基盘系统</h4>
+                    <p>跨国 SAP 集成财务与申报系统开发项目，覆盖 10+ 国家。负责测试支持、用户沟通和 WorkItem 管理。</p>
+                    <div class="project-tags">
+                        <span class="project-tag">SAP FI/SD</span>
+                        <span class="project-tag">测试管理</span>
+                        <span class="project-tag">跨国团队</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h4>Vibe Coding 个人主页</h4>
+                    <p>用 TRAE + Vibe Coding 方式从零搭建的个人作品集网站，练习 HTML/CSS/JS 和 AI 辅助开发。</p>
+                    <div class="project-tags">
+                        <span class="project-tag">HTML/CSS</span>
+                        <span class="project-tag">Vibe Coding</span>
+                        <span class="project-tag">TRAE</span>
+                    </div>
+                </div>
             </div>
         </div>
 
