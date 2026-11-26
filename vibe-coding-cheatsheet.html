@@ -435,6 +435,106 @@ element.classList.toggle('active')
 // JS:
 const filter = btn.dataset.filter  // "all"</code></pre>
 
+        <h3>📌 异步编程 &amp; fetch API</h3>
+        <p class="section-meta">网络请求是异步的——发出去不用等，回来再处理</p>
+
+        <h4>① 同步 vs 异步</h4>
+        <table>
+            <tr><th>类型</th><th>特点</th><th>类比</th></tr>
+            <tr><td>同步</td><td>一件事做完再做下一件，会卡住</td><td>排队买饭，轮到你才点单</td></tr>
+            <tr><td>异步</td><td>同时做多件，哪件先好先处理</td><td>扫码点单，做好了叫号取餐</td></tr>
+        </table>
+
+        <h4>② Promise：异步操作的"承诺"</h4>
+        <pre><code>// 三种状态：pending（进行中）→ fulfilled（成功）→ rejected（失败）
+
+// .then() 处理成功，.catch() 处理失败
+fetch(url)
+    .then(res => res.json())
+    .then(data => console.log(data))
+    .catch(err => console.log('出错了', err))</code></pre>
+
+        <h4>③ async / await：更优雅的写法</h4>
+        <pre><code>// 函数前面加 async，里面就能用 await
+async function getData() {
+    try {
+        const res = await fetch(url)       // 等响应
+        const data = await res.json()      // 等解析 JSON
+        console.log(data)
+    } catch (err) {
+        console.log('请求失败：', err)      // 出错了走这里
+    }
+}
+
+// 对比：像同步代码一样直上直下，但不会卡住页面</code></pre>
+        <div class="tip">await 只能在 async 函数里用。记住：async 包一层，await 等结果，try/catch 抓错误。</div>
+
+        <h4>④ fetch API：发 HTTP 请求</h4>
+        <pre><code>// GET 请求（拿数据）
+async function getWeather() {
+    const res = await fetch('https://api.example.com/weather?city=shanghai')
+    const data = await res.json()
+    return data
+}
+
+// POST 请求（提交数据）
+async function postData() {
+    const res = await fetch('https://api.example.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: '张三', age: 25 })
+    })
+    const data = await res.json()
+    return data
+}</code></pre>
+
+        <h4>⑤ Promise.allSettled：处理多个请求，部分失败也不怕</h4>
+        <pre><code>// 三个请求同时发，不管成功失败都返回结果
+const results = await Promise.allSettled([
+    fetch(url1),
+    fetch(url2),
+    fetch(url3)
+])
+
+// 每个结果有 status: 'fulfilled' 或 'rejected'
+// 成功的用 .value，失败的用 .reason
+results.forEach(r => {
+    if (r.status === 'fulfilled') {
+        console.log('成功：', r.value)
+    } else {
+        console.log('失败：', r.reason)
+    }
+})</code></pre>
+        <div class="tip">Promise.all 是"全部成功才成功，一个失败全失败"；allSettled 是"不管成败都等全部结束，各自处理"。</div>
+
+        <h4>⑥ 实战：天气查询项目的核心流程</h4>
+        <pre><code>// 1. 用户输入城市名 → 调用地理编码 API 拿经纬度
+// 2. 用经纬度 → 调用天气 API 拿天气数据
+// 3. 渲染到页面上
+// 4. 存到 localStorage（历史记录）
+
+async function searchWeather(cityName) {
+    try {
+        // 第一步：地理编码（城市名 → 经纬度）
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${cityName}`)
+        const geoData = await geoRes.json()
+        if (!geoData.results) throw new Error('城市不存在')
+
+        const { latitude, longitude } = geoData.results[0]
+
+        // 第二步：拿天气
+        const weatherRes = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code`
+        )
+        const weatherData = await weatherRes.json()
+
+        // 第三步：渲染
+        renderWeather(weatherData.current)
+    } catch (err) {
+        showError(err.message)
+    }
+}</code></pre>
+
         <!-- ==================== 第4章 ==================== -->
         <h2>第4章 · Git 版本管理</h2>
         <p class="section-meta">代码的"时光机"——保存每一个版本</p>
@@ -532,18 +632,18 @@ git pull</code></pre>
         <ul>
             <li>HTML/CSS 入门：能看懂结构和样式，能用 AI 辅助做页面</li>
             <li>JavaScript 基础：变量、函数、数组、对象、DOM 操作</li>
-            <li>JavaScript 进阶：数组高阶方法（filter/map/find/some/every）、ES6+ 新特性（解构、展开运算符、可选链、空值合并）</li>
+            <li>JavaScript 进阶：数组高阶方法、ES6+ 新特性、异步编程（Promise/async-await）、fetch API、错误处理</li>
             <li>Git 基础：本地提交 + 远程推送 + GitHub Pages 部署</li>
-            <li>Vibe Coding：能用 AI 完成完整的小项目、代码重构</li>
-            <li>两个完整项目：个人主页 + 待办清单（筛选/本地存储/ES6+重构）</li>
+            <li>Vibe Coding：能用 AI 完成完整的小项目、代码重构、问题排查</li>
+            <li>三个完整项目：个人主页 + 待办清单（筛选/本地存储/重构）+ 天气查询（三语/API/历史记录）</li>
         </ul>
 
         <h3>📌 接下来学什么</h3>
         <table>
             <tr><th>优先级</th><th>内容</th><th>为什么学</th><th>状态</th></tr>
-            <tr><td>⭐⭐⭐⭐⭐</td><td>JS 进阶：异步、Promise、fetch API</td><td>做真实应用都要调后端接口</td><td>下一站</td></tr>
-            <tr><td>⭐⭐⭐⭐</td><td>前端框架：React / Vue</td><td>现代开发的标配，Vibe Coding 也常用</td><td>待学</td></tr>
+            <tr><td>⭐⭐⭐⭐⭐</td><td>JS 模块化（import/export）</td><td>代码拆分，工程化项目必备</td><td>下一站</td></tr>
             <tr><td>⭐⭐⭐⭐</td><td>Node.js + 后端开发</td><td>做全栈项目，理解后端逻辑</td><td>待学</td></tr>
+            <tr><td>⭐⭐⭐⭐</td><td>前端框架：React / Vue</td><td>现代开发的标配，Vibe Coding 也常用</td><td>待学</td></tr>
             <tr><td>⭐⭐⭐⭐</td><td>AI 应用开发：LLM / RAG / Agent</td><td>你的目标方向</td><td>待学</td></tr>
             <tr><td>⭐⭐⭐</td><td>SQL 进阶</td><td>工作中能用，做项目也需要</td><td>待学</td></tr>
             <tr><td>⭐⭐⭐</td><td>Python 进阶</td><td>AI 应用和后端都用得到</td><td>待学</td></tr>
