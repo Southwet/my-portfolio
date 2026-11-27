@@ -590,6 +590,104 @@ api.fetchWeather('上海')</code></pre>
 
         <div class="warn">模块化的 JS 必须通过 HTTP 服务器访问，不能直接双击 HTML（file:// 协议会报错）。用 <code>npx http-server</code> 或 <code>python -m http.server</code> 起本地服务。</div>
 
+        <h3>📌 Node.js &amp; Express 后端入门</h3>
+        <p class="section-meta">JS 不只是浏览器里跑，也能当后端服务器</p>
+
+        <h4>① 什么是 Node.js？</h4>
+        <p>Node.js = 跑在服务器上的 JavaScript。以前 JS 只能在浏览器里跑，现在可以写后端服务、操作文件、连数据库。</p>
+        <div class="tip"><strong>类比：</strong>JS 就像一个演员，在浏览器演"前端"，在 Node.js 演"后端"，语法一样，戏路不同。</div>
+
+        <h4>② npm 包管理</h4>
+        <p>npm = Node Package Manager，类似 Python 的 pip。</p>
+        <pre><code># 初始化项目（生成 package.json）
+npm init -y
+
+# 安装包
+npm install express   # 或 npm i express
+
+# 开发依赖
+npm install --save-dev nodemon
+
+# 卸载
+npm uninstall express</code></pre>
+
+        <h4>③ 最简 Express 服务器</h4>
+        <pre><code>const express = require('express')
+const app = express()
+const port = 3000
+
+// 中间件：解析 JSON 请求体
+app.use(express.json())
+
+// 中间件：允许跨域
+const cors = require('cors')
+app.use(cors())
+
+// 自定义日志中间件
+app.use((req, res, next) =&gt; {
+    console.log(`${req.method} ${req.url}`)
+    next()  // 必须调用 next() 才会继续往下走
+})
+
+// 定义路由
+app.get('/', (req, res) =&gt; {
+    res.send('Hello World!')
+})
+
+// 启动服务器
+app.listen(port, () =&gt; {
+    console.log(`服务器运行在 http://localhost:${port}`)
+})</code></pre>
+
+        <h4>④ RESTful API 设计规范</h4>
+        <p>用 HTTP 方法表示操作（动词），用 URL 表示资源（名词）。</p>
+        <table>
+            <tr><th>方法</th><th>路径</th><th>作用</th><th>类比SQL</th></tr>
+            <tr><td>GET</td><td>/api/todos</td><td>获取所有</td><td>SELECT</td></tr>
+            <tr><td>GET</td><td>/api/todos/:id</td><td>获取单个</td><td>SELECT WHERE</td></tr>
+            <tr><td>POST</td><td>/api/todos</td><td>新建</td><td>INSERT</td></tr>
+            <tr><td>PUT</td><td>/api/todos/:id</td><td>更新</td><td>UPDATE</td></tr>
+            <tr><td>DELETE</td><td>/api/todos/:id</td><td>删除</td><td>DELETE</td></tr>
+        </table>
+
+        <h4>⑤ 常用状态码</h4>
+        <table>
+            <tr><th>状态码</th><th>含义</th><th>场景</th></tr>
+            <tr><td>200</td><td>OK</td><td>查询/更新成功</td></tr>
+            <tr><td>201</td><td>Created</td><td>新建成功</td></tr>
+            <tr><td>204</td><td>No Content</td><td>删除成功（无返回内容）</td></tr>
+            <tr><td>400</td><td>Bad Request</td><td>参数错误</td></tr>
+            <tr><td>404</td><td>Not Found</td><td>资源不存在</td></tr>
+            <tr><td>500</td><td>Internal Server Error</td><td>服务器内部错误</td></tr>
+        </table>
+
+        <h4>⑥ 统一响应格式</h4>
+        <pre><code>// 成功
+res.json({ success: true, data: result })
+
+// 失败
+res.status(400).json({ success: false, message: '参数错误' })</code></pre>
+
+        <h4>⑦ 错误处理中间件</h4>
+        <p>Express 特殊的四参数中间件，统一处理所有错误。</p>
+        <pre><code>// 路由里用 next(err) 传错误
+app.get('/api/todos/:id', (req, res, next) =&gt; {
+    try {
+        // ...
+    } catch (err) {
+        next(err)  // 传到错误处理中间件
+    }
+})
+
+// 错误处理中间件（四个参数：err, req, res, next）
+app.use((err, req, res, next) =&gt; {
+    console.error(err)
+    res.status(500).json({
+        success: false,
+        message: '服务器内部错误'
+    })
+})</code></pre>
+
         <!-- ==================== 第4章 ==================== -->
         <h2>第4章 · Git 版本管理</h2>
         <p class="section-meta">代码的"时光机"——保存每一个版本</p>
@@ -688,18 +786,19 @@ git pull</code></pre>
             <li>HTML/CSS 入门：能看懂结构和样式，能用 AI 辅助做页面</li>
             <li>JavaScript 基础：变量、函数、数组、对象、DOM 操作</li>
             <li>JavaScript 进阶：数组高阶方法、ES6+ 新特性、异步编程（Promise/async-await）、fetch API、错误处理、模块化（import/export）</li>
+            <li>Node.js &amp; 后端基础：Express 框架、RESTful API 设计、中间件、CORS、错误处理、npm 包管理</li>
             <li>Git 基础：本地提交 + 远程推送 + GitHub Pages 部署</li>
-            <li>Vibe Coding：能用 AI 完成完整的小项目、代码重构、问题排查、模块化拆分</li>
-            <li>三个完整项目：个人主页 + 待办清单（筛选/本地存储/重构）+ 天气查询（三语/API/模块化）</li>
+            <li>Vibe Coding：能用 AI 完成完整的小项目、代码重构、问题排查、模块化拆分、后端 API 开发</li>
+            <li>四个完整项目：个人主页 + 待办清单（筛选/本地存储/重构）+ 天气查询（三语/API/模块化）+ Todo 后端 API（Express）</li>
         </ul>
 
         <h3>📌 接下来学什么</h3>
         <table>
             <tr><th>优先级</th><th>内容</th><th>为什么学</th><th>状态</th></tr>
-            <tr><td>⭐⭐⭐⭐⭐</td><td>Node.js + 后端开发</td><td>做全栈项目，理解后端逻辑</td><td>下一站</td></tr>
+            <tr><td>⭐⭐⭐⭐⭐</td><td>前后端联调 + 数据库</td><td>打通全栈，Todo List 接入真实后端和数据库</td><td>下一站</td></tr>
             <tr><td>⭐⭐⭐⭐</td><td>前端框架：React / Vue</td><td>现代开发的标配，Vibe Coding 也常用</td><td>待学</td></tr>
+            <tr><td>⭐⭐⭐⭐</td><td>SQL 进阶</td><td>工作中能用，做项目也需要</td><td>待学</td></tr>
             <tr><td>⭐⭐⭐⭐</td><td>AI 应用开发：LLM / RAG / Agent</td><td>你的目标方向</td><td>待学</td></tr>
-            <tr><td>⭐⭐⭐</td><td>SQL 进阶</td><td>工作中能用，做项目也需要</td><td>待学</td></tr>
             <tr><td>⭐⭐⭐</td><td>Python 进阶</td><td>AI 应用和后端都用得到</td><td>待学</td></tr>
         </table>
 
